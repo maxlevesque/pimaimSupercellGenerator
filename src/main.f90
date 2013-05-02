@@ -85,18 +85,17 @@ program pimaimSupercellGenerator
     liq%species%coord = abs(liq%species%charge)
     if( sum(liq%species%compo)<0.9999 .or. sum(liq%species%compo)>1.0001 ) stop 'STOP. Sum of compositions should be 1'
     if ( any(liq%species%compo<0.) ) stop 'STOP. No molar fraction should be negative.'
-    if ( any(liq%species%compo>1.d0) )
-        .or. any(liq%species%compo>1.)
+    if ( any(liq%species%compo>1.d0) ) stop 'STOP. Molar fractions should be between 0 and 1, ie. not 70 for 0.7.'
     read(21,*) cell%length ! length of the orthorombic supercell
     if( cell%length < 1. ) stop 'STOP. length is too small'
     read(21,*)liq%nTot ! approximate total number of atoms in the supercell
     if( liq%nTot < 1 ) stop 'STOP. too few atoms. Check input.'
     
-    ! now we compute the number of atoms of each species
-    myz = real(liq%nTot)
-    myx = real(liq%species(1)%coord+1)
-    myy = real(liq%species(1)%coord-liq%species(2)%coord)
-    liq%species(2)%nbInCell = liq%species(2)%compo*myz/myx/(1.-liq%species(2)%compo*myy/myx)
+!~     ! now we compute the number of atoms of each species
+!~     myz = real(liq%nTot)
+!~     myx = real(liq%species(1)%coord+1)
+!~     myy = real(liq%species(1)%coord-liq%species(2)%coord)
+!~     liq%species(2)%nbInCell = liq%species(2)%compo*myz/myx/(1.-liq%species(2)%compo*myy/myx)
     
     
     

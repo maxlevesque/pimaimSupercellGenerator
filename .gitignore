@@ -2,3 +2,7 @@ obj/*
 obj
 .sconsign.dblite
 pimaimSupercellGenerator
+restart.inpt
+restart.inpt.xyz
+runtime.inpt
+

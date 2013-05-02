@@ -1,7 +1,6 @@
-4       Number of species in the liquid, e.g. 3 in NaF-ZrF4
-F -1.0 0.
-Zr 4.0 0.30
-Na 1.0 0.69805
-Y  3.0 0.00195
-53.0    Length of orthorombic supercell in Bohr
+3       Number of species in the liquid, e.g. 3 in NaF-ZrF4
+F Zr Na
+-1 4 0
+0.0 0.3 0.7
+43.0    Length of orthorombic supercell in Bohr
 600     Target total number of atoms in the supercell

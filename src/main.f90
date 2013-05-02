@@ -59,7 +59,7 @@ program pimaimSupercellGenerator
     if(      liq%nSpecies==1 ) then ! read names then charge horizontaly. Not elegant but don't know how to do better.
         read(21,*) liq%species(1)%name
         read(21,*) liq%species(1)%charge
-        read(21,*) liq%species(1)%compo
+        liq%species(1)%compo = 1.0d0
     else if( liq%nSpecies==2 ) then
         read(21,*) liq%species(1)%name, liq%species(2)%name
         read(21,*) liq%species(1)%charge, liq%species(2)%charge
@@ -77,14 +77,16 @@ program pimaimSupercellGenerator
     end if
     do i=1,liq%nSpecies ! all species names should be different
         do j=i,liq%nSpecies
-            if( liq%species(i)%name==liq%species(j)%name .and. i/=j ) stop 'STOP. Two species have same name.'
+            if (liq%species(i)%name == liq%species(j)%name .and. i /= j) stop 'STOP. Two species have same name.'
         end do
     end do
     if( count(liq%species%charge<0.)==0 .or. count(liq%species%charge>0.)==0 ) &
             stop 'STOP. There should be positive **and** negative charges in the supercell'
     liq%species%coord = abs(liq%species%charge)
-    if( sum(liq%species%compo)<0.9999 .or. sum(liq%species%compo)>1.0001 .or. any(liq%species%compo<0.) &
-        .or. any(liq%species%compo>1.) ) stop 'STOP. Sum of compositions should be 1'
+    if( sum(liq%species%compo)<0.9999 .or. sum(liq%species%compo)>1.0001 ) stop 'STOP. Sum of compositions should be 1'
+    if ( any(liq%species%compo<0.) ) stop 'STOP. No molar fraction should be negative.'
+    if ( any(liq%species%compo>1.d0) )
+        .or. any(liq%species%compo>1.)
     read(21,*) cell%length ! length of the orthorombic supercell
     if( cell%length < 1. ) stop 'STOP. length is too small'
     read(21,*)liq%nTot ! approximate total number of atoms in the supercell

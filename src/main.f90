@@ -57,6 +57,8 @@ module input
             do i= 1, size(mo)
                 read(11,*) mo(i)%moFrac
             end do
+            if (any(mo%moFrac<0._dp)) stop "STOP. No mole fraction should be negative"
+            if (any(mo%moFrac>1._dp)) stop "STOP. No mole fraction should be more than 1"
         end subroutine
         
         subroutine readDescriptionsOfMolecules
@@ -107,6 +109,7 @@ module supercell
             ! note that all nodes may not be fulfilled with a molecule because of real to integer transforms.
             do i= 1, size(mo) ! for each molecule
                 tar = int (mo(i)%moFrac * size(cell%nod))
+                if (tar == 0) tar = 1
                 acc = 0
                 do while (acc < tar)
                     call random_number (rn(1:3))
@@ -127,21 +130,21 @@ module supercell
                 if( nAtPerMo == 0 ) then
                     stop "STOP. Impossible. This problem should have been detected sooner"
                 else if( nAtPerMo == 1 ) then
-                    mo(m)%at(1)%pos(:) = [0._dp, 0._dp, 0._dp]
+                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
                 else if( nAtPerMo == 2 ) then
-                    mo(m)%at(1)%pos(:) = [-0.25_dp, -0.25_dp, -0.25_dp]
-                    mo(m)%at(2)%pos(:) = [0.25_dp, 0.25_dp, 0.25_dp]
+                    mo(m)%at(1)%pos(:) = 0.5_dp*real([-1, -1, -1],dp)
+                    mo(m)%at(2)%pos(:) = 0.5_dp*real([1, 1, 1],dp)
                 else if( nAtPerMo == 3 ) then
-                    mo(m)%at(1)%pos(:) = [0._dp, 0._dp, 0._dp]
-                    mo(m)%at(2)%pos(:) = [-0.25_dp, -0.25_dp, -0.25_dp]
-                    mo(m)%at(3)%pos(:) = [0.25_dp, 0.25_dp, 0.25_dp]
+                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
+                    mo(m)%at(2)%pos(:) = real([-1, -1, -1],dp)
+                    mo(m)%at(3)%pos(:) = real([1, 1, 1],dp)
                 else if( nAtPerMo == 4 ) then
-                    mo(m)%at(1)%pos(:) = [0._dp, 0._dp, 0._dp]
-                    mo(m)%at(2)%pos(:) = [-0.25_dp, 0.25_dp, 0.25_dp]
-                    mo(m)%at(3)%pos(:) = [-0.25_dp, -0.25_dp, -0.25_dp]
-                    mo(m)%at(4)%pos(:) = [0.25_dp, 0._dp, 0._dp]
+                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
+                    mo(m)%at(2)%pos(:) = real([-1, 1, 1],dp)
+                    mo(m)%at(3)%pos(:) = real([-1, -1, -1],dp)
+                    mo(m)%at(4)%pos(:) = real([1, 0, 0],dp)
                 else if( nAtPerMo == 5 ) then
-                    mo(m)%at(1)%pos(:) = [0._dp, 0._dp, 0._dp]
+                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
                     mo(m)%at(2)%pos(:) = 2._dp/sqrt(3._dp)*real([-1,1,-1],dp)
                     mo(m)%at(3)%pos(:) = 2._dp/sqrt(3._dp)*real([-1,-1,1],dp)
                     mo(m)%at(4)%pos(:) = 2._dp/sqrt(3._dp)*real([1,1,1],dp)
@@ -167,7 +170,6 @@ module final
     type (atoms), dimension(:), allocatable :: at
     integer(i2b) :: nbOfAtomicTypes
     character(2), dimension(:), allocatable :: atomicTypes
-
     
     contains
     

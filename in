@@ -1,20 +1,19 @@
-3         Number of species in the liquid, e.g. 2 in NaF-ZrF4
-0.3       Molecular fraction of molecule 1 (e.g. 0.3, not 30)
-0.6       Molecular fraction of molecule 2 (e.g. 0.3, not 30)
-0.0
-2         Number of atomic types in molecule 1, e.g. 2 for NaF (Na and F)
-Na         Number of atoms of type 1 in molecule 1
-F         Number of atoms of type 2 in molecule 1
-5         Number of atomic types in molecule 1, e.g. 2 for ZrF4 (Zr and F)
-Zr         Number of atoms of type 1 in molecule 2
+3         Number of species in the liquid, NaF ZrF4 and YF3
+0.5       Molecular fraction of molecule 1 (ZrF4)
+0.5       Molecular fraction of molecule 2 (NaF)
+0.0	  Molecular fraction of molecule 3 (YF3)
+5
 F
 F
 F
-F         Number of atoms of type 2 in molecule 2
+F
+Zr
+2
+F
+Na
 4
+F
+F
+F
 Y
-F
-F
-F
-43.0    Length of orthorombic supercell in Bohr
-600     Target total number of atoms in the supercell
+43.0

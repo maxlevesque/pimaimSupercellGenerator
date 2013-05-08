@@ -1,9 +1,9 @@
 3         Number of species in the liquid, NaF ZrF4 and YF3
-0.5       Molecular fraction of molecule 1 (ZrF4)
-0.5       Molecular fraction of molecule 2 (NaF)
+0.37      Molecular fraction of molecule 1 (ZrF4)
+0.63      Molecular fraction of molecule 2 (NaF)
 0.0	  Molecular fraction of molecule 3 (YF3)
-5
-F
+5         Number of sites in the first molecule (5 in ZrF4)
+F         Name of each site
 F
 F
 F
@@ -16,4 +16,4 @@ F
 F
 F
 Y
-43.0
+43.0      Length of the cubic supercell in Bohr

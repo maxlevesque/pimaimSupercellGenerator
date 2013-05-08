@@ -132,23 +132,23 @@ module supercell
                 else if( nAtPerMo == 1 ) then
                     mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
                 else if( nAtPerMo == 2 ) then
-                    mo(m)%at(1)%pos(:) = 0.5_dp*real([-1, -1, -1],dp)
-                    mo(m)%at(2)%pos(:) = 0.5_dp*real([1, 1, 1],dp)
+                    mo(m)%at(1)%pos(:) = 2._dp/sqrt(3._dp)*real([-1, -1, -1],dp)
+                    mo(m)%at(2)%pos(:) = 2._dp/sqrt(3._dp)*real([1, 1, 1],dp)
                 else if( nAtPerMo == 3 ) then
-                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
-                    mo(m)%at(2)%pos(:) = real([-1, -1, -1],dp)
-                    mo(m)%at(3)%pos(:) = real([1, 1, 1],dp)
+                    mo(m)%at(1)%pos(:) = 2._dp/sqrt(3._dp)*real([1, 1, 1],dp)
+                    mo(m)%at(2)%pos(:) = 2._dp/sqrt(3._dp)*real([-1, -1, -1],dp)
+                    mo(m)%at(3)%pos(:) = real([0, 0, 0],dp)
                 else if( nAtPerMo == 4 ) then
-                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
+                    mo(m)%at(1)%pos(:) = 2._dp*real([1, 0, 0],dp)
                     mo(m)%at(2)%pos(:) = real([-1, 1, 1],dp)
                     mo(m)%at(3)%pos(:) = real([-1, -1, -1],dp)
-                    mo(m)%at(4)%pos(:) = real([1, 0, 0],dp)
+                    mo(m)%at(4)%pos(:) = real([0, 0, 0],dp)
                 else if( nAtPerMo == 5 ) then
-                    mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
+                    mo(m)%at(1)%pos(:) = 2._dp/sqrt(3._dp)*real([1,-1,-1],dp)
                     mo(m)%at(2)%pos(:) = 2._dp/sqrt(3._dp)*real([-1,1,-1],dp)
                     mo(m)%at(3)%pos(:) = 2._dp/sqrt(3._dp)*real([-1,-1,1],dp)
                     mo(m)%at(4)%pos(:) = 2._dp/sqrt(3._dp)*real([1,1,1],dp)
-                    mo(m)%at(5)%pos(:) = 2._dp/sqrt(3._dp)*real([1,-1,-1],dp)
+                    mo(m)%at(5)%pos(:) = real([0, 0, 0],dp)
                 else
                     stop "STOP. More than 5 sites per molecule is not yet supported. Implement it please."
                 end if
@@ -178,6 +178,14 @@ module final
             call determineNumberOfAtomTypes
             call writeXSF
             call writeRestartDotDat
+            call printInfoOut
+        end subroutine
+        
+        subroutine printInfoOut
+            integer(i2b) :: i
+            do i= 1, nbOfAtomicTypes
+                print*,'nb of type ',i,count (at%name == atomicTypes(i))
+            end do
         end subroutine
         
         subroutine listAllPositionsInCellOrder

@@ -49,6 +49,7 @@ module input
             open (11, file="in")
             read(11,*) nMo
             allocate (mo(1:nMo))
+            print*,'There are ',size(mo),' molecules.'
         end subroutine
         
         subroutine readMoleFractionOfEachDifferentMolecule
@@ -64,12 +65,13 @@ module input
         subroutine readDescriptionsOfMolecules
             use derived_types, only: mo
             integer(i2b) :: m, i
-            do m= 1, size(mo)
-                read(11,*) i
+            do m= 1, size(mo) ! size(mo) is the total number of molecules, the first line of the input file
+                read(11,*) i ! number of atoms in molecule m
                 allocate (mo(m)%at(i))
                 do i= 1, size(mo(m)%at)
                     read(11,'(A)') mo(m)%at(i)%name
                 end do
+                print*,'molecule ',m,' has ',size(mo(m)%at),' atoms: ',mo(m)%at(:)%name,'. Mole fraction ',mo(m)%moFrac
             end do
         end subroutine
         
@@ -190,13 +192,13 @@ module final
         
         subroutine listAllPositionsInCellOrder
             use derived_types, only: cell, mo
-            integer :: i, j, k, l, moInThisNod, a
+            integer :: i, j, k, l, totalNbOfAtomsInSupercell, moInThisNod, a
             real(dp), dimension(3) :: nod
-            real(dp), dimension(:,:), allocatable :: coo ! coord
-            character(2), dimension(:), allocatable :: nat ! nature
-            allocate (coo(5000,3), source=0._dp) ! magic number. An evaluation of the maximum number of positions should be given.
-            allocate (nat(5000)) ! magic neutral character. An evaluation of the maximum number of positions should be given.
-            nat = "0"
+            totalNbOfAtomsInSupercell = 0
+            do concurrent (i=1:size(cell%nod,1) , j=1:size(cell%nod,2) , k=1:size(cell%nod,3), cell%nod(i,j,k)/=0)
+                totalNbOfAtomsInSupercell = totalNbOfAtomsInSupercell + size(mo(cell%nod(i,j,k))%at)
+            end do
+            allocate (at(totalNbOfAtomsInSupercell))
             l = 0
             do i= 1, size(cell%nod,1)
                 do j= 1, size(cell%nod,2)
@@ -206,18 +208,12 @@ module final
                         if( moInThisNod == 0) cycle ! for the few nodes not containing molecule
                         do a = 1, size(mo(moInThisNod)%at)
                             l = l + 1
-                            coo(l,:) = mo(moInThisNod)%at(a)%pos(:) + nod(:)
-                            nat(l) = mo(moInThisNod)%at(a)%name
+                            at(l)%pos(:) = mo(moInThisNod)%at(a)%pos(:) + nod(:)
+                            at(l)%name = mo(moInThisNod)%at(a)%name
                         end do
                     end do
                 end do
             end do
-            allocate( at(l) )
-            do i = 1, l
-                at(i)%pos(:) = coo(i,:)
-                at(i)%name = nat(i)
-            end do
-            deallocate (coo, nat)
         end subroutine
 
         subroutine coordinatesOfCenterOfNode (nod,i,j,k)
@@ -230,19 +226,26 @@ module final
             kmax = size(cell%nod,3)
             nod = cell%len * [real(i-1,dp)/real(imax,dp), real(j-1,dp)/real(jmax,dp), real(k-1,dp)/real(kmax,dp)]
         end subroutine
-        
+
         subroutine determineNumberOfAtomTypes
-            integer(i2b) :: i
-            allocate( atomicTypes( size(at)) )
-            atomicTypes = "0"
+            integer(i2b) :: i, j
+            j = 0
+            do i = 1, size(mo)
+                j = j + size(mo(i)%at)
+            end do
+            allocate( atomicTypes (j) )
+            atomicTypes = "0" ! zero is not an atomic symbol
             nbOfAtomicTypes = 0
-            do i= 1, size(at)
-                if (any(atomicTypes==at(i)%name)) then
-                    cycle
-                else
-                    nbOfAtomicTypes= nbOfAtomicTypes + 1
-                    atomicTypes (nbOfAtomicTypes) = at(i)%name
-                end if
+            do i = 1, size(mo)
+                do j = 1, size(mo(i)%at)
+                    if (any(atomicTypes==mo(i)%at(j)%name)) then ! it's a known name
+                        cycle
+                    else
+                        nbOfAtomicTypes = nbOfAtomicTypes + 1
+                        atomicTypes (nbOfAtomicTypes) = mo(i)%at(j)%name
+                        print*,'type ',nbOfAtomicTypes,' is ',atomicTypes (nbOfAtomicTypes)
+                    end if
+                end do
             end do
             block ! reshape atomicTypes (an intrinsic function exists that does that but the semantics are cryptic)
                 character(2), dimension(size(atomicTypes)) :: tmp
@@ -252,7 +255,7 @@ module final
                 atomicTypes(1:nbOfAtomicTypes) = tmp(1:nbOfAtomicTypes)
             end block
         end subroutine
-        
+       
         subroutine writeXSF
             integer(i2b) :: i, j
             open(10, file='restart.dat.xyz')

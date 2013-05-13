@@ -135,7 +135,7 @@ module supercell
                     mo(m)%at(1)%pos(:) = real([0, 0, 0],dp)
                 else if( nAtPerMo == 2 ) then
                     mo(m)%at(1)%pos(:) = 2._dp/sqrt(3._dp)*real([-1, -1, -1],dp)
-                    mo(m)%at(2)%pos(:) = 2._dp/sqrt(3._dp)*real([1, 1, 1],dp)
+                    mo(m)%at(2)%pos(:) = real([0, 0, 0],dp)
                 else if( nAtPerMo == 3 ) then
                     mo(m)%at(1)%pos(:) = 2._dp/sqrt(3._dp)*real([1, 1, 1],dp)
                     mo(m)%at(2)%pos(:) = 2._dp/sqrt(3._dp)*real([-1, -1, -1],dp)

@@ -1,7 +1,7 @@
 3         Number of species in the liquid, BeF2 NaF and YF3
-0.30     Molecular fraction of molecule 1 (BeF2)
-0.70     Molecular fraction of molecule 2 (NaF)
-0.0	  Molecular fraction of molecule 3 (YF3)
+0.30      Molecular fraction of molecule 1 (BeF2)
+0.70      Molecular fraction of molecule 2 (NaF)
+0.0       Molecular fraction of molecule 3 (YF3)
 3         Number of sites in the first molecule (3 in BeF2)
 F         Name of each site
 F
@@ -15,4 +15,4 @@ F
 F
 Y
 32.0      Length of the cubic supercell in Bohr
-6         Number of molecule in each direction of the supercell
+5         Number of molecule in each direction of the supercell

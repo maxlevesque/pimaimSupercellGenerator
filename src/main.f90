@@ -61,6 +61,7 @@ module input
             end do
             if (any(mo%moFrac<0._dp)) stop "STOP. No mole fraction should be negative"
             if (any(mo%moFrac>1._dp)) stop "STOP. No mole fraction should be more than 1"
+            if ( abs(sum(mo%moFrac)-1.0_dp) > epsilon(1.0_dp) ) stop "STOP. Sum of mole fraction should be 1."
         end subroutine
         
         subroutine readDescriptionsOfMolecules
@@ -113,15 +114,27 @@ module supercell
             integer(i2b) :: i
             real(dp), dimension(3) :: rn
             integer(i2b), dimension(3) :: irn
-            integer(i2b) :: tar, acc ! target, accepted
+            integer(i2b) :: acc ! target, accepted
+            integer(i2b), dimension(size(mo)) :: tar
             cell%nod = 0 ! initialization to something one will never want
             ! The number of molecules of type 1 is mo(1)%moFrac * 5*5*5 if cell%nod allocated as (5:5:5)
             ! note that all nodes may not be fulfilled with a molecule because of the real number given in the line above to integer transforms.
+            where (mo%moFrac == 0._dp) ! When one wants a single molecule, he may give 0 as mole fraction. The target number of molecule is then given 1 and the other mole fractions are re-calculated in order to take into account the mole fraction represented by this 1 molecule.
+                tar = 1
+            else where
+                tar = nint( (mo%moFrac-count(mo%moFrac==0._dp)/real(size(cell%nod)*count(mo%moFrac/=0._dp),dp))  *size(cell%nod) )
+            end where
+            if (sum(tar) > size(cell%nod)) then ! debug informations
+                print*,'--- CRITICAL PROBLEM ---'
+                do i= 1, size(tar)
+                    print*,'The target number of molecules number ',i,' is ',tar(i)
+                end do
+                print*,'For a total number of molecules in the supercell of ',sum(tar),' and a maximum of ',size(cell%nod)
+                stop 'STOP'
+            end if
             do i= 1, size(mo) ! for each molecule
-                tar = int (mo(i)%moFrac * size(cell%nod))
-                if (tar == 0) tar = 1
                 acc = 0
-                do while (acc < tar)
+                do while (acc < tar(i))
                     call random_number (rn(1:3))
                     irn = int (rn*real(size(cell%nod,1))) + 1
                     if (cell%nod(irn(1),irn(2),irn(3)) == 0) then

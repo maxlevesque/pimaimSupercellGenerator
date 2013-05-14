@@ -15,7 +15,7 @@ module derived_types
 
     type supercell
         real(dp) :: len ! length of the supercell. For now cubic cell, i.e. constant length along each direction
-        integer(i2b), dimension(5,5,5) :: nod
+        integer(i2b), dimension(:,:,:), allocatable :: nod
     end type
     type (supercell), public :: cell
     real(dp), public, dimension(:,:,:), allocatable :: coordinates
@@ -34,6 +34,7 @@ module input
             call readMoleFractionOfEachDifferentMolecule
             call readDescriptionsOfMolecules
             call readCellLength
+            call readNumberOfMoleculesInEachDirectionOfSupercell
             call closeInput
         end subroutine
         
@@ -80,6 +81,13 @@ module input
             read(11,*) cell%len
         end subroutine
         
+        subroutine readNumberOfMoleculesInEachDirectionOfSupercell
+            use derived_types, only: cell
+            integer(i2b) :: i
+            read(11,*) i
+            allocate (cell%nod(i,i,i)) ! the supercell can only be cubic for now
+        end subroutine
+        
         subroutine closeInput
             close(11)
         end subroutine
@@ -107,8 +115,8 @@ module supercell
             integer(i2b), dimension(3) :: irn
             integer(i2b) :: tar, acc ! target, accepted
             cell%nod = 0 ! initialization to something one will never want
-            ! The number of molecules of type 1 is mo(1)%moFrac * 512
-            ! note that all nodes may not be fulfilled with a molecule because of real to integer transforms.
+            ! The number of molecules of type 1 is mo(1)%moFrac * 5*5*5 if cell%nod allocated as (5:5:5)
+            ! note that all nodes may not be fulfilled with a molecule because of the real number given in the line above to integer transforms.
             do i= 1, size(mo) ! for each molecule
                 tar = int (mo(i)%moFrac * size(cell%nod))
                 if (tar == 0) tar = 1

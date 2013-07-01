@@ -50,7 +50,7 @@ module input
             open (11, file="in")
             read(11,*) nMo
             allocate (mo(1:nMo))
-            print*,'There are ',size(mo),' molecules.'
+            print*,'There are ',size(mo),' type(s) of molecule.'
         end subroutine
         
         subroutine readMoleFractionOfEachDifferentMolecule

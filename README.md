@@ -1,12 +1,10 @@
-pimaimSupercellGenerator
-========================
+# pimaimSupercellGenerator
 
-pimaimSupercellGenerator generates simulation supercells for the molecular dynamic package PIMAIM.
+pimaimSupercellGenerator generates simulation supercells for the molecular dynamic package PIMAIM.  
 It generates the input file *restart.dat*.
 
 
-Compilation
------------
+## Compilation
 
 First, you need **SCONS** on your computer. SCONS is not yet very well known, but let's say it is an improved autotools (configure+make). SCONS can be found in the repositories of almost every linux distribution. Feedback about macOS is welcome.
 
@@ -17,8 +15,7 @@ $ scons
 The files SConstruct and SConscript that can be found in the pimaimSupercellGenerator package are used by SCONS.
 
 
-Exemple of Input file named "in"
---------------------------------
+## Exemple of Input file named "in"
 ```
 3     Number of species in the liquid, NaF ZrF4 and YF3
 0.5   Molecular fraction of molecule 1 (ZrF4)
@@ -41,8 +38,9 @@ Y
 43.0  The generated cubic supercell will be 43 Bohr wide.
 6     Number of molecule in each direction of the supercell.
 ```
+## Remarks
 
+The supercell can be impossible to build for a given concentration. You will have to slightly change the concentration in order to help the program.
 
-Future optimizations
---------------------
+## Future optimizations
 [] The supercell can only be cubic. The number of molecules in the supercell can only be around i^3, with i a positive integer.
